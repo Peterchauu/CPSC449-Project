@@ -4,6 +4,7 @@ import { collection, addDoc, onSnapshot, getDocs, deleteDoc, doc } from "firebas
 import { signOut } from "firebase/auth";
 import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
+import "../styles/Dashboard.css"; // Import the CSS file for styling
 
 const Dashboard = ({ user }) => {
   const [todos, setTodos] = useState([]);
@@ -74,24 +75,21 @@ const Dashboard = ({ user }) => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="dashboard-container">
       {/* Left Column */}
-      <div style={{ width: "30%", padding: "20px", borderRight: "1px solid #ccc" }}>
+      <div className="sidebar">
         <h1>Dashboard</h1>
-        <button onClick={handleSignOut} style={{ width: "100%", marginBottom: "20px" }}>
+        <button onClick={handleSignOut} className="signout-button">
           Sign Out
         </button>
-        <button onClick={clearDatabase} style={{ width: "100%", marginBottom: "20px", backgroundColor: "red", color: "white" }}>
+        <button onClick={clearDatabase} className="clear-button">
           Clear Database
         </button>
 
         {/* Tasks Section */}
-        <div>
+        <div className="tasks-section">
           <h2>My Tasks</h2>
-          <button
-            onClick={() => addTask("New Task")}
-            style={{ width: "100%", marginBottom: "10px" }}
-          >
+          <button onClick={() => addTask("New Task")} className="add-task-button">
             Add Task
           </button>
           <TodoList todos={todos} setTodos={setTodos} />
@@ -106,7 +104,7 @@ const Dashboard = ({ user }) => {
       </div>
 
       {/* Right Column */}
-      <div style={{ width: "70%", padding: "20px" }}>
+      <div className="main-content">
         <CalendarDisplay
           selectedCalendar={selectedCalendar}
           events={events} // Pass events state
