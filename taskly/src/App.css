@@ -36,17 +36,3 @@
     transform: rotate(360deg);
   }
 }
-
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  padding: 10px;
-  margin: 5px 0;
-  background-color: #f4f4f4;
-  border: 1px solid #ddd;
-  cursor: grab;
-}

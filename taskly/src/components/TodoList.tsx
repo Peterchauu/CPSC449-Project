@@ -1,13 +1,19 @@
+import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-const TodoList = ({ todos, setTodos }) => {
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
+interface Todo {
+  id: string;
+  text: string;
+}
 
+const TodoList: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) return;
     const items = Array.from(todos);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-
     setTodos(items);
   };
 
@@ -16,15 +22,15 @@ const TodoList = ({ todos, setTodos }) => {
       <Droppable droppableId="todos">
         {(provided) => (
           <ul {...provided.droppableProps} ref={provided.innerRef}>
-            {todos.map((todo, index) => (
-              <Draggable key={todo.id} draggableId={todo.id} index={index}>
+            {todos.map(({ id, text }, index) => (
+              <Draggable key={id} draggableId={id} index={index}>
                 {(provided) => (
                   <li
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {todo.text}
+                    {text}
                   </li>
                 )}
               </Draggable>

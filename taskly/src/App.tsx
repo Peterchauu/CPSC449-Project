@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { auth } from "./firebase";
+import React, { useState, useEffect } from "react";
+import { auth, User } from "./firebase";
 import SignIn from "./components/SignIn";
 import Dashboard from "./components/Dashboard";
 
-function App() {
-  const [user, setUser] = useState(null);
+const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -14,6 +14,6 @@ function App() {
   }, []);
 
   return <div>{user ? <Dashboard user={user} /> : <SignIn />}</div>;
-}
+};
 
 export default App;
