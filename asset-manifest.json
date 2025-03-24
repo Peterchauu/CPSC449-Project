@@ -1,16 +1,14 @@
 {
   "files": {
-    "main.css": "/CPSC449-Project/static/css/main.df051e13.css",
-    "main.js": "/CPSC449-Project/static/js/main.c7717f76.js",
-    "static/js/453.3665640e.chunk.js": "/CPSC449-Project/static/js/453.3665640e.chunk.js",
+    "main.css": "/CPSC449-Project/static/css/main.595ceba8.css",
+    "main.js": "/CPSC449-Project/static/js/main.445d33e9.js",
     "index.html": "/CPSC449-Project/index.html",
     "static/media/en-US.cjs": "/CPSC449-Project/static/media/en-US.c3a6319ea4f219498e6f.cjs",
-    "main.df051e13.css.map": "/CPSC449-Project/static/css/main.df051e13.css.map",
-    "main.c7717f76.js.map": "/CPSC449-Project/static/js/main.c7717f76.js.map",
-    "453.3665640e.chunk.js.map": "/CPSC449-Project/static/js/453.3665640e.chunk.js.map"
+    "main.595ceba8.css.map": "/CPSC449-Project/static/css/main.595ceba8.css.map",
+    "main.445d33e9.js.map": "/CPSC449-Project/static/js/main.445d33e9.js.map"
   },
   "entrypoints": [
-    "static/css/main.df051e13.css",
-    "static/js/main.c7717f76.js"
+    "static/css/main.595ceba8.css",
+    "static/js/main.445d33e9.js"
   ]
 }
