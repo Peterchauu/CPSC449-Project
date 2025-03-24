@@ -4,12 +4,14 @@ import { collection, addDoc, onSnapshot, getDocs, deleteDoc, doc } from "firebas
 import { signOut } from "firebase/auth";
 import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
+import TaskModal from "./TaskModal";
 import "../styles/Dashboard.css"; // Import the CSS file for styling
 
 const Dashboard = ({ user }) => {
   const [todos, setTodos] = useState([]);
   const [selectedCalendar, setSelectedCalendar] = useState(null);
   const [events, setEvents] = useState([]); // State for events
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   useEffect(() => {
     // Listen for real-time updates from Firestore
@@ -26,18 +28,21 @@ const Dashboard = ({ user }) => {
     return () => unsubscribe();
   }, [user.uid]);
 
-  const addTask = async (text) => {
-    if (text.trim() === "") return;
+  const addTask = async (title, description, date) => {
+    if (title.trim() === "" || date.trim() === "") return;
     await addDoc(collection(db, "users", user.uid, "todos"), {
-      text,
+      title,
+      description,
+      date,
       createdAt: new Date(),
     });
+    setIsTaskModalOpen(false);
   };
 
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      window.location.href = "/signin"; // Redirect to sign-in page
+      window.location.href = "#/signin"; // Redirect to sign-in page
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -67,7 +72,7 @@ const Dashboard = ({ user }) => {
       }
 
       alert("Database cleared successfully!");
-      window.location.href = "/signin"; // Redirect to sign-in page
+      window.location.href = "#/signin"; // Redirect to sign-in page
     } catch (error) {
       console.error("Error clearing database:", error);
       alert("Failed to clear the database. Check the console for details.");
@@ -89,7 +94,7 @@ const Dashboard = ({ user }) => {
         {/* Tasks Section */}
         <div className="tasks-section">
           <h2>My Tasks</h2>
-          <button onClick={() => addTask("New Task")} className="add-task-button">
+          <button onClick={() => setIsTaskModalOpen(true)} className="add-task-button">
             Add Task
           </button>
           <TodoList todos={todos} setTodos={setTodos} />
@@ -111,6 +116,14 @@ const Dashboard = ({ user }) => {
           updateEvents={setEvents} // Pass setEvents as updateEvents
         />
       </div>
+
+      {/* Task Modal */}
+      {isTaskModalOpen && (
+        <TaskModal
+          onClose={() => setIsTaskModalOpen(false)}
+          onSave={addTask}
+        />
+      )}
     </div>
   );
 };

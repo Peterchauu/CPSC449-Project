@@ -9,7 +9,7 @@ const SignIn = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, provider);
-      window.location.href = "/dashboard"; // Redirect to dashboard
+      window.location.href = "/dashboard"; 
     } catch (error) {
       setError("Failed to sign in with Google. Please try again.");
     }
