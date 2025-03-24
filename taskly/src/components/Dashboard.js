@@ -5,6 +5,7 @@ import { signOut } from "firebase/auth";
 import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
 import TaskModal from "./TaskModal";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import "../styles/Dashboard.css"; // Import the CSS file for styling
 
 const Dashboard = ({ user }) => {
@@ -28,12 +29,11 @@ const Dashboard = ({ user }) => {
     return () => unsubscribe();
   }, [user.uid]);
 
-  const addTask = async (title, description, date) => {
-    if (title.trim() === "" || date.trim() === "") return;
+  const addTask = async (title, description) => {
+    if (title.trim() === "") return;
     await addDoc(collection(db, "users", user.uid, "todos"), {
       title,
       description,
-      date,
       createdAt: new Date(),
     });
     setIsTaskModalOpen(false);
@@ -79,6 +79,27 @@ const Dashboard = ({ user }) => {
     }
   };
 
+  const onDragEnd = async (result) => {
+    const { destination, draggableId } = result;
+
+    if (!destination) return;
+
+    const draggedTask = todos.find((task) => task.id === draggableId);
+
+    if (destination.droppableId === "calendar") {
+      const start = new Date(destination.droppableId);
+      const end = new Date(start);
+      end.setHours(start.getHours() + 1); // Set end time to 1 hour after start time
+
+      await addDoc(collection(db, "calendars", selectedCalendar.id, "events"), {
+        title: draggedTask.title,
+        start,
+        end,
+      });
+      await deleteDoc(doc(db, "users", user.uid, "todos", draggedTask.id));
+    }
+  };
+
   return (
     <div className="dashboard-container">
       {/* Left Column */}
@@ -97,7 +118,16 @@ const Dashboard = ({ user }) => {
           <button onClick={() => setIsTaskModalOpen(true)} className="add-task-button">
             Add Task
           </button>
-          <TodoList todos={todos} setTodos={setTodos} />
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="tasks">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <TodoList todos={todos} />
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </div>
 
         {/* Calendar List Section */}
@@ -110,11 +140,20 @@ const Dashboard = ({ user }) => {
 
       {/* Right Column */}
       <div className="main-content">
-        <CalendarDisplay
-          selectedCalendar={selectedCalendar}
-          events={events} // Pass events state
-          updateEvents={setEvents} // Pass setEvents as updateEvents
-        />
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="calendar">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                <CalendarDisplay
+                  selectedCalendar={selectedCalendar}
+                  events={events} // Pass events state
+                  updateEvents={setEvents} // Pass setEvents as updateEvents
+                />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
 
       {/* Task Modal */}
