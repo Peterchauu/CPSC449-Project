@@ -5,6 +5,7 @@ import { signOut } from "firebase/auth";
 import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
 import TaskModal from "./TaskModal";
+import EventModal from "./EventModal";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import "../styles/Dashboard.css"; // Import the CSS file for styling
 
@@ -13,6 +14,9 @@ const Dashboard = ({ user }) => {
   const [selectedCalendar, setSelectedCalendar] = useState(null);
   const [events, setEvents] = useState([]); // State for events
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [hoveredDate, setHoveredDate] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     // Listen for real-time updates from Firestore
@@ -37,6 +41,35 @@ const Dashboard = ({ user }) => {
       createdAt: new Date(),
     });
     setIsTaskModalOpen(false);
+  };
+
+  const addEvent = async (title, start, end) => {
+    if (!selectedCalendar || !title.trim() || !start || !end) return;
+
+    try {
+      await addDoc(
+        collection(db, "calendars", selectedCalendar.id, "events"),
+        {
+          title,
+          start: start.toISOString(), // Ensure the date is stored as a string
+          end: end.toISOString(),     // Ensure the date is stored as a string
+        }
+      );
+      setIsEventModalOpen(false);
+    } catch (error) {
+      console.error("Error adding event:", error);
+    }
+  };
+
+  const deleteEvent = async (eventId) => {
+    if (!selectedCalendar || !eventId) return;
+
+    try {
+      await deleteDoc(doc(db, "calendars", selectedCalendar.id, "events", eventId));
+      setIsEventModalOpen(false);
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
   };
 
   const handleSignOut = async () => {
@@ -144,11 +177,16 @@ const Dashboard = ({ user }) => {
           <Droppable droppableId="calendar">
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                <CalendarDisplay
-                  selectedCalendar={selectedCalendar}
-                  events={events} // Pass events state
-                  updateEvents={setEvents} // Pass setEvents as updateEvents
-                />
+                {selectedCalendar && (
+                  <CalendarDisplay
+                    selectedCalendar={selectedCalendar}
+                    events={events} // Pass events state
+                    updateEvents={setEvents} // Pass setEvents as updateEvents
+                    setHoveredDate={setHoveredDate}
+                    setIsEventModalOpen={setIsEventModalOpen}
+                    setSelectedEvent={setSelectedEvent}
+                  />
+                )}
                 {provided.placeholder}
               </div>
             )}
@@ -161,6 +199,17 @@ const Dashboard = ({ user }) => {
         <TaskModal
           onClose={() => setIsTaskModalOpen(false)}
           onSave={addTask}
+        />
+      )}
+
+      {/* Event Modal */}
+      {isEventModalOpen && (
+        <EventModal
+          onClose={() => setIsEventModalOpen(false)}
+          onSave={addEvent}
+          onDelete={deleteEvent}
+          initialDate={hoveredDate}
+          event={selectedEvent}
         />
       )}
     </div>

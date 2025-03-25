@@ -1,0 +1,59 @@
+.rbc-event {
+    background-color: #add8e6 !important;
+    border-radius: 5px;
+    opacity: 0.8;
+    color: black;
+    border: 0px;
+    display: block;
+    padding: 5px;
+    margin: 2px 0;
+  }
+  
+  .my-calendar-section input[type="text"] {
+    width: 94%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+  
+  .my-calendar-section button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+  }
+  
+
+  .my-calendar-section ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .my-calendar-section li {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+  .my-calendar-section li input[type="text"] {
+    width: 92%;
+    margin-top: 10px;
+    border-radius: 4px;
+  }
+  
+  .my-calendar-section li button {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+  }

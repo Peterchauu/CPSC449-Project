@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion } from "firebase/firestore";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import EventModal from "./EventModal";
+import "../styles/Calendar.css";
 
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
@@ -22,6 +24,7 @@ const localizer = dateFnsLocalizer({
 export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) => {
   const [calendars, setCalendars] = useState([]);
   const [newCalendarName, setNewCalendarName] = useState("");
+  const [shareEmail, setShareEmail] = useState("");
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "calendars"), (snapshot) => {
@@ -48,35 +51,54 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
     }
   };
 
+  const shareCalendar = async (calendarId) => {
+    if (!shareEmail.trim()) return;
+    try {
+      const calendarRef = doc(db, "calendars", calendarId);
+      await updateDoc(calendarRef, {
+        sharedWith: arrayUnion(shareEmail),
+      });
+      setShareEmail("");
+      alert("Calendar shared successfully!");
+    } catch (error) {
+      console.error("Error sharing calendar:", error);
+      alert("Failed to share calendar. Check the console for details.");
+    }
+  };
+
   return (
-    <div>
+    <div className="my-calendar-section">
       <h2>My Calendars</h2>
-      <div style={{ marginBottom: "20px" }}>
+      <div>
         <input
           type="text"
           placeholder="New Calendar Name"
           value={newCalendarName}
           onChange={(e) => setNewCalendarName(e.target.value)}
-          style={{ width: "100%", marginBottom: "10px" }}
         />
-        <button onClick={createCalendar} style={{ width: "100%" }}>
+        <button onClick={createCalendar}>
           Create Calendar
         </button>
       </div>
-      <ul style={{ listStyleType: "none", padding: 0 }}>
+      <ul>
         {calendars.map((calendar) => (
           <li
             key={calendar.id}
             onClick={() => setSelectedCalendar(calendar)}
             style={{
-              cursor: "pointer",
-              padding: "10px",
-              backgroundColor: selectedCalendar?.id === calendar.id ? "#f0f0f0" : "transparent",
-              borderRadius: "5px",
-              marginBottom: "5px",
+              backgroundColor: selectedCalendar?.id === calendar.id ? "#e9ecef" : "transparent",
             }}
           >
             {calendar.name}
+            <input
+              type="text"
+              placeholder="Share with email"
+              value={shareEmail}
+              onChange={(e) => setShareEmail(e.target.value)}
+            />
+            <button onClick={() => shareCalendar(calendar.id)}>
+              Share Calendar
+            </button>
           </li>
         ))}
       </ul>
@@ -85,9 +107,7 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
 };
 
 // Calendar Display Component
-export const CalendarDisplay = ({ selectedCalendar, events, updateEvents }) => {
-  const [hoveredDate, setHoveredDate] = useState(null);
-
+export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHoveredDate, setIsEventModalOpen, setSelectedEvent }) => {
   useEffect(() => {
     if (!selectedCalendar) return;
 
@@ -107,62 +127,64 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents }) => {
     return () => unsubscribe();
   }, [selectedCalendar, updateEvents]);
 
-  const addEvent = async (title, start, end) => {
-    if (!selectedCalendar || !title.trim() || !start || !end) return;
-
-    try {
-      await addDoc(
-        collection(db, "calendars", selectedCalendar.id, "events"),
-        {
-          title,
-          start,
-          end,
-        }
-      );
-    } catch (error) {
-      console.error("Error adding event:", error);
-    }
-  };
-
-  const onDragEnd = async (result) => {
-    const { destination, draggableId } = result;
-
-    if (!destination || !hoveredDate) return;
-
-    const draggedTask = events.find((event) => event.id === draggableId);
-
-    if (destination.droppableId === "calendar") {
-      const start = new Date(hoveredDate);
-      const end = new Date(start);
-      end.setHours(start.getHours() + 1); // Set end time to 1 hour after start time
-
-      await addEvent(draggedTask.title, start, end);
-    }
-  };
-
   const handleSlotHover = (slotInfo) => {
     setHoveredDate(slotInfo.start);
   };
 
-  if (!selectedCalendar) {
-    return <p>Please select a calendar to view events.</p>;
-  }
+  const handleSlotSelect = (slotInfo) => {
+    setHoveredDate(slotInfo.start);
+    setSelectedEvent(null);
+    setIsEventModalOpen(true);
+  };
+
+  const handleEventSelect = (event) => {
+    setSelectedEvent(event);
+    setIsEventModalOpen(true);
+  };
+  
+  const eventPropGetter = (event) => {
+    const style = {
+      backgroundColor: "#add8e6",
+      borderRadius: "5px",
+      opacity: 0.8,
+      color: "black",
+      border: "0px",
+      display: "block",
+    };
+    return {
+      style: style,
+    };
+  };
+
+  const eventComponent = ({ event }) => (
+    <span>
+      <strong>{event.title}</strong>
+      <br />
+      {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </span>
+  );
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext>
       <Droppable droppableId="calendar">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             <h2>{selectedCalendar.name}</h2>
-            <div style={{ height: 500 }}>
+            <div style={{ height: 600 }}> {/* Increase the height to fit multiple events */}
               <BigCalendar
                 localizer={localizer}
                 events={events} // Pass events array
                 startAccessor="start" // Use the start date
                 endAccessor="end"     // Use the end date
                 style={{ height: "100%" }}
-                onSelectSlot={handleSlotHover}
+                onSelectSlot={handleSlotSelect}
+                onSelectEvent={handleEventSelect} // Add this line to handle event selection
+                onHoverSlot={handleSlotHover}
                 selectable
+                eventPropGetter={eventPropGetter} // Add this line for custom event styles
+                components={{
+                  event: eventComponent, // Add this line to use the custom event component
+                }}
               />
             </div>
             {provided.placeholder}
@@ -174,9 +196,11 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents }) => {
 };
 
 // Main Calendar Component
-const Calendar = ({ user, displayOnly }) => {
+const Calendar = ({ user, displayOnly, addEvent }) => {
   const [selectedCalendar, setSelectedCalendar] = useState(null);
   const [events, updateEvents] = useState([]);
+  const [hoveredDate, setHoveredDate] = useState(null);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
   if (displayOnly) {
     return selectedCalendar ? (
@@ -212,8 +236,17 @@ const Calendar = ({ user, displayOnly }) => {
           selectedCalendar={selectedCalendar}
           events={events}
           updateEvents={updateEvents}
+          setHoveredDate={setHoveredDate}
+          setIsEventModalOpen={setIsEventModalOpen}
         />
       </div>
+      {isEventModalOpen && (
+        <EventModal
+          onClose={() => setIsEventModalOpen(false)}
+          onSave={addEvent}
+          initialDate={hoveredDate}
+        />
+      )}
     </div>
   );
 };

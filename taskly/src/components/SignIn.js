@@ -18,6 +18,7 @@ const SignIn = () => {
   return (
     <div className="signin-container">
       <div className="signin-card">
+        <h1>Taskly</h1>
         <h2>Sign In</h2>
         {error && <p className="error-message">{error}</p>}
         <button onClick={handleGoogleSignIn} className="signin-button">
