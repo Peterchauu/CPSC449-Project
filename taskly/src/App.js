@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { auth } from "./firebase";
 import SignIn from "./components/SignIn";
 import Dashboard from "./components/Dashboard";
+import { DarkModeProvider } from "./context/DarkModeContext";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -13,7 +14,11 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  return <div>{user ? <Dashboard user={user} /> : <SignIn />}</div>;
+  return (
+    <DarkModeProvider>
+      <div>{user ? <Dashboard user={user} /> : <SignIn />}</div>
+    </DarkModeProvider>
+  );
 }
 
 export default App;

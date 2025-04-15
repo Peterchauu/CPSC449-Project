@@ -1,5 +1,5 @@
 import React from "react";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 
 const TodoList = ({ todos }) => {
   return (
@@ -11,13 +11,7 @@ const TodoList = ({ todos }) => {
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              style={{
-                padding: "8px",
-                margin: "4px",
-                backgroundColor: "#f0f0f0",
-                borderRadius: "4px",
-                ...provided.draggableProps.style,
-              }}
+              className="task-item"
             >
               {todo.title}
             </div>

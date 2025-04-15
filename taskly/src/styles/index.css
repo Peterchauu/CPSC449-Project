@@ -1,3 +1,15 @@
+:root {
+  /* Light mode variables */
+  --background-color: #f0f2f5;
+  --card-background-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #cccccc;
+  --button-background-color: #007bff;
+  --button-text-color: #ffffff;
+  --button-hover-background-color: #0056b3;
+  --error-color: red;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +22,39 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+body.dark-mode {
+  /* Dark mode variables */
+  --background-color: #121212;
+  --card-background-color: #1e1e1e;
+  --text-color: #ffffff;
+  --border-color: #444444;
+  --button-background-color: #bb86fc;
+  --button-text-color: #121212;
+  --button-hover-background-color: #CBC3E3;
+  --error-color: #ff6b6b;
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important; 
+}
+
+body.dark-mode .signin-card,
+body.dark-mode .dashboard-container {
+  background-color: var(--card-background-color) !important; 
+  color: var(--text-color) !important;
+}
+
+body.dark-mode .signin-button,
+body.dark-mode .add-task-button,
+body.dark-mode .signout-button,
+body.dark-mode .clear-button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+}
+
+body.dark-mode .signin-button:hover,
+body.dark-mode .add-task-button:hover,
+body.dark-mode .signout-button:hover,
+body.dark-mode .clear-button:hover {
+  background-color: var(--button-hover-background-color);
 }

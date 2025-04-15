@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
+import DarkModeToggle from "./DarkModeToggle";
 import "../styles/SignIn.css";
 
 const SignIn = () => {
@@ -17,6 +18,7 @@ const SignIn = () => {
 
   return (
     <div className="signin-container">
+      <DarkModeToggle />
       <div className="signin-card">
         <h1>Taskly</h1>
         <h2>Sign In</h2>

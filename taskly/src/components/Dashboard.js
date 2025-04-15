@@ -6,7 +6,8 @@ import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
 import TaskModal from "./TaskModal";
 import EventModal from "./EventModal";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import DarkModeToggle from "./DarkModeToggle";
 import "../styles/Dashboard.css"; // Import the CSS file for styling
 
 const Dashboard = ({ user }) => {
@@ -135,6 +136,7 @@ const Dashboard = ({ user }) => {
 
   return (
     <div className="dashboard-container">
+      <DarkModeToggle /> {/* Add the toggle */}
       {/* Left Column */}
       <div className="sidebar">
         <h1>Dashboard</h1>

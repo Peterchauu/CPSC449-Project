@@ -4,7 +4,7 @@ import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion } from "fire
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import EventModal from "./EventModal";
 import "../styles/Calendar.css";
 
@@ -85,9 +85,9 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
           <li
             key={calendar.id}
             onClick={() => setSelectedCalendar(calendar)}
-            style={{
-              backgroundColor: selectedCalendar?.id === calendar.id ? "#e9ecef" : "transparent",
-            }}
+            className={`calendar-item ${
+              selectedCalendar?.id === calendar.id ? "selected" : ""
+            }`} 
           >
             {calendar.name}
             <input
@@ -96,7 +96,10 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
               value={shareEmail}
               onChange={(e) => setShareEmail(e.target.value)}
             />
-            <button onClick={() => shareCalendar(calendar.id)}>
+            <button
+              onClick={() => shareCalendar(calendar.id)}
+              className="share-calendar-button"
+            >
               Share Calendar
             </button>
           </li>
@@ -117,7 +120,7 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHov
         const calendarEvents = snapshot.docs.map((doc) => ({
           id: doc.id,
           title: doc.data().title,
-          start: new Date(doc.data().start), // Convert Firestore timestamp to Date
+          start: new Date(doc.data().start), 
           end: new Date(doc.data().end),
         }));
         updateEvents(calendarEvents);
@@ -170,20 +173,20 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHov
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             <h2>{selectedCalendar.name}</h2>
-            <div style={{ height: 600 }}> {/* Increase the height to fit multiple events */}
+            <div style={{ height: 600 }}> 
               <BigCalendar
                 localizer={localizer}
-                events={events} // Pass events array
-                startAccessor="start" // Use the start date
-                endAccessor="end"     // Use the end date
+                events={events} 
+                startAccessor="start" 
+                endAccessor="end"  
                 style={{ height: "100%" }}
                 onSelectSlot={handleSlotSelect}
-                onSelectEvent={handleEventSelect} // Add this line to handle event selection
+                onSelectEvent={handleEventSelect} 
                 onHoverSlot={handleSlotHover}
                 selectable
-                eventPropGetter={eventPropGetter} // Add this line for custom event styles
+                eventPropGetter={eventPropGetter} 
                 components={{
-                  event: eventComponent, // Add this line to use the custom event component
+                  event: eventComponent, 
                 }}
               />
             </div>

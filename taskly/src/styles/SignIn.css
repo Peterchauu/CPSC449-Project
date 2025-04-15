@@ -1,42 +1,46 @@
 .signin-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f2f5;
-  }
-  
-  .signin-card {
-    background: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--background-color); 
+  transition: background-color 0.3s ease; 
+}
 
-  .signin-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .signin-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .error-message {
-    color: red;
-    margin-bottom: 20px;
-  }
+.signin-card {
+  background: var(--card-background-color); 
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}
 
-  h1 {
-    font-size: 50px;
-    font-weight: light;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
-  }
+.signin-button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--button-background-color); 
+  color: var(--button-text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.signin-button:hover {
+  background-color: var(--button-hover-background-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: light;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: var(--text-color); 
+}

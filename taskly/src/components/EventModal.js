@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/EventModal.css"; // Import the CSS file for styling
+import "../styles/EventModal.css";
 
 const EventModal = ({ onClose, onSave, onDelete, initialDate, event }) => {
   const [title, setTitle] = useState(event ? event.title : "");

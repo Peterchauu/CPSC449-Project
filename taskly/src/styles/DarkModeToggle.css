@@ -1,0 +1,25 @@
+.dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px; 
+  background-color: transparent;
+  color: #007bff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  z-index: 1000;
+}
+
+.dark-mode-toggle:hover {
+  color: #0056b3;
+  transform: scale(1.1);
+}
+
+body.dark-mode .dark-mode-toggle {
+  color: #bb86fc;
+}
+
+body.dark-mode .dark-mode-toggle:hover {
+  color: #9a67ea;
+}
