@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import DarkModeToggle from "./DarkModeToggle";
-import "../styles/SignIn.css";
+import "../styles/index.css";
 
 const SignIn = () => {
   const [error, setError] = useState("");

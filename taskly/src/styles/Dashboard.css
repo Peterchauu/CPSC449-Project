@@ -24,25 +24,31 @@
 .add-task-button,
 .signout-button,
 .clear-button,
-.create-calendar-button,
-.share-calendar-button {
+.share-calendar-button,
+.my-calendar-section-button {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 10px;
   cursor: pointer;
+  font: calibri;
   font-size: 16px;
   background-color: var(--button-background-color); 
+  border-color: var(--button-border-color);
   color: var(--button-text-color); 
-  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: var(--button-box-shadow);
+  transition: transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-style);
 }
 
 .add-task-button:hover,
 .signout-button:hover,
 .clear-button:hover,
 .create-calendar-button:hover,
-.share-calendar-button:hover {
+.share-calendar-button:hover, 
+.my-calendar-section-button:hover {
   background-color: var(--button-hover-background-color); 
+  transform: scale(0.95);
 }
 
 .tasks-section {
@@ -62,9 +68,12 @@
 }
 
 .task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 8px;
-  margin: 4px;
-  background-color: var(--card-background-color); 
+  margin: 4px 0;
+  background-color: var(--card-background-color);
   border-radius: 4px;
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -87,4 +96,21 @@
 .calendar-item.selected {
   background-color: var(--button-hover-background-color); 
   color: var(--button-text-color);
+}
+
+.delete-calendar-button,
+.delete-task-button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 18px;
+  font-family: 'Arial Black', sans-serif; 
+  cursor: pointer;
+  margin-left: auto; 
+  transition: color 0.3s ease;
+}
+
+.delete-calendar-button:hover,f
+.delete-task-button:hover {
+  color: var(--error-color);
 }

@@ -10,7 +10,7 @@ import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import DarkModeToggle from "./DarkModeToggle";
 import "../styles/Dashboard.css"; 
 
-const Dashboard = ({ user }) => {
+const Dashboard = () => {
   const [todos, setTodos] = useState([]);
   const [selectedCalendar, setSelectedCalendar] = useState(null);
   const [events, setEvents] = useState([]); 
@@ -18,20 +18,30 @@ const Dashboard = ({ user }) => {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [hoveredDate, setHoveredDate] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, "users", user.uid, "todos"),
-      (snapshot) => {
-        const tasks = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setTodos(tasks);
-      }
-    );
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
     return () => unsubscribe();
-  }, [user.uid]);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = onSnapshot(
+        collection(db, "users", user.uid, "todos"),
+        (snapshot) => {
+          const tasks = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setTodos(tasks);
+        }
+      );
+      return () => unsubscribe();
+    }
+  }, [user]);
 
   const addTask = async (title, description) => {
     if (title.trim() === "") return;
@@ -150,7 +160,7 @@ const Dashboard = ({ user }) => {
             <Droppable droppableId="tasks">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  <TodoList todos={todos} />
+                  <TodoList todos={todos} user={user}/>
                   {provided.placeholder}
                 </div>
               )}

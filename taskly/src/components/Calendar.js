@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion } from "firebase/firestore";
+import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion, getDocs, deleteDoc} from "firebase/firestore";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
@@ -46,6 +46,24 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
     }
   };
 
+  const deleteCalendar = async (calendarId) => {
+    try {
+      const eventsRef = collection(db, "calendars", calendarId, "events");
+      const eventsSnapshot = await getDocs(eventsRef);
+      const deletePromises = eventsSnapshot.docs.map((eventDoc) =>
+        deleteDoc(doc(db, "calendars", calendarId, "events", eventDoc.id))
+      );
+      await Promise.all(deletePromises);
+      const calendarRef = doc(db, "calendars", calendarId);
+      await deleteDoc(calendarRef);
+      alert("Calendar deleted successfully!");
+
+    } catch (error) {
+      console.error("Error deleting calendar:", error);
+      alert("Failed to delete calendar. Check the console for details.");
+    }
+  };
+
   const shareCalendar = async (calendarId) => {
     if (!shareEmail.trim()) return;
     try {
@@ -71,7 +89,7 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
           value={newCalendarName}
           onChange={(e) => setNewCalendarName(e.target.value)}
         />
-        <button onClick={createCalendar}>
+        <button onClick={createCalendar} className="my-calendar-section-button">
           Create Calendar
         </button>
       </div>
@@ -84,7 +102,16 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
               selectedCalendar?.id === calendar.id ? "selected" : ""
             }`} 
           >
-            {calendar.name}
+            <span>{calendar.name}</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteCalendar(calendar.id);
+              }}
+              className="delete-calendar-button"
+            >
+              x
+            </button>            
             <input
               type="text"
               placeholder="Share with email"

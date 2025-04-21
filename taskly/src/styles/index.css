@@ -1,4 +1,56 @@
-/* Shared Modal Styles */
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--background-color); 
+  transition: background-color 0.3s ease; 
+}
+
+.signin-card {
+  background: var(--card-background-color); 
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+.signin-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: calibri;
+  font-size: 16px;
+  background-color: var(--button-background-color); 
+  border-color: var(--button-border-color);
+  color: var(--button-text-color); 
+  box-shadow: var(--button-box-shadow);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-style);
+}
+
+.signin-button:hover {
+  background-color: var(--button-hover-background-color); 
+}
+
+.error-message {
+  color: var(--error-color);
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: light;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: var(--text-color); 
+}
+
+/* modal styles for both event and task */
 .modal {
   z-index: 1000;
   position: fixed;
@@ -70,43 +122,49 @@
 .modal-buttons .save-button {
   background-color: var(--button-background-color);
   color: var(--button-text-color);
+  font-weight: bold;
 }
 
 .modal-buttons .save-button:hover {
   background-color: var(--button-hover-background-color);
-  transform: scale(1.05);
+  transform: scale(0.95);
 }
 
 .modal-buttons .cancel-button {
-  background-color: #dc3545;
-  color: white;
+  background-color: #de2d3e;
+  color: var(--button-text-color);
+  font-weight: bold;
 }
 
 .modal-buttons .cancel-button:hover {
-  background-color: #a71d2a;
-  transform: scale(1.05);
+  background-color: #c32c3b;
+  transform: scale(0.95);
 }
 
 .modal-buttons .delete-button {
-  background-color: #ffc107;
-  color: black;
+  background-color: #de2d3e;
+  color: var(--button-text-color);
+  font-weight: bold;
 }
 
 .modal-buttons .delete-button:hover {
-  background-color: #e0a800;
-  transform: scale(1.05);
+  background-color: #c32c3b;
+  transform: scale(0.95);
 }
 
 :root {
-  /* Light mode variables */
+  /* Light mode */
   --background-color: #f0f2f5;
   --card-background-color: #ffffff;
   --text-color: #333333;
   --border-color: #cccccc;
-  --button-background-color: #007bff;
   --button-text-color: #ffffff;
-  --button-hover-background-color: #0056b3;
+  --button-background-color: #328ff3;
+  --button-hover-background-color: #2d78c8;
   --error-color: red;
+  --button-border-color: #333333;
+  --button-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --font-style: 'Calibri', 'Arial', sans-serif;
 }
 
 body {
@@ -114,27 +172,23 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 
 body.dark-mode {
-  /* Dark mode variables */
+  /* Dark mode */
   --background-color: #121212;
   --card-background-color: #1e1e1e;
   --text-color: #ffffff;
   --border-color: #444444;
-  --button-background-color: #bb86fc;
   --button-text-color: #121212;
-  --button-hover-background-color: #CBC3E3;
+  --button-background-color: #bb86fc;
+  --button-hover-background-color: #9380ca;
   --error-color: #ff6b6b;
   background-color: var(--background-color) !important;
   color: var(--text-color) !important; 
+  --button-border-color: #ffffff;
+  --button-box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+  --font-style: 'Calibri', 'Arial', sans-serif;
 }
 
 body.dark-mode .signin-card,

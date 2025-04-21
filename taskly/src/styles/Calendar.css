@@ -43,21 +43,6 @@ body.dark-mode .rbc-today {
   outline: none;
 }
 
-.my-calendar-section button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  background-color: var(--button-background-color); 
-  color: var(--button-text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.my-calendar-section button:hover {
-  background-color: var(--button-hover-background-color); 
-}
 
 .my-calendar-section ul {
   list-style-type: none;
@@ -94,20 +79,4 @@ body.dark-mode .rbc-today {
 .my-calendar-section li input[type="text"]:focus {
   border-color: var(--button-background-color);
   outline: none;
-}
-
-.my-calendar-section li button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  background-color: var(--button-background-color);
-  color: var(--button-text-color); 
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.my-calendar-section li button:hover {
-  background-color: var(--button-hover-background-color);
 }
