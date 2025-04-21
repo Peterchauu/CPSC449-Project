@@ -15,8 +15,20 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.rbc-today {
+  background-color: #e3f2fd !important; 
+  color: #000000 !important; 
+  border: 1px solid #90caf9 !important; 
+}
+
+body.dark-mode .rbc-today {
+  background-color: #424242 !important; 
+  color: #ffffff !important; 
+  border: 1px solid #bb86fc !important; 
+}
+
 .my-calendar-section input[type="text"] {
-  width: 94%;
+  width: 91%;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 6px;
@@ -26,6 +38,7 @@
 }
 
 .my-calendar-section input[type="text"]:focus {
+  width: 91%;
   border-color: #007bff;
   outline: none;
 }
@@ -54,32 +67,32 @@
 .my-calendar-section li {
   cursor: pointer;
   padding: 10px;
-  background-color: var(--card-background-color); /* Use a CSS variable */
+  background-color: var(--card-background-color);
   border-radius: 5px;
   margin-bottom: 5px;
   display: flex;
   flex-direction: column;
-  color: var(--text-color); /* Use a CSS variable */
+  color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .my-calendar-section li.selected {
-  background-color: var(--button-hover-background-color); /* Use a CSS variable */
-  color: var(--button-text-color); /* Use a CSS variable */
+  background-color: var(--button-hover-background-color);
+  color: var(--button-text-color); 
 }
 
 .my-calendar-section li input[type="text"] {
   width: 92%;
   margin-top: 10px;
   border-radius: 4px;
-  background-color: var(--card-background-color); /* Use a CSS variable */
-  color: var(--text-color); /* Use a CSS variable */
-  border: 1px solid var(--border-color); /* Use a CSS variable */
+  background-color: var(--card-background-color);
+  color: var(--text-color); 
+  border: 1px solid var(--border-color); 
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .my-calendar-section li input[type="text"]:focus {
-  border-color: var(--button-background-color); /* Use a CSS variable */
+  border-color: var(--button-background-color);
   outline: none;
 }
 
@@ -90,11 +103,11 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  background-color: var(--button-background-color); /* Use a CSS variable */
-  color: var(--button-text-color); /* Use a CSS variable */
+  background-color: var(--button-background-color);
+  color: var(--button-text-color); 
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .my-calendar-section li button:hover {
-  background-color: var(--button-hover-background-color); /* Use a CSS variable */
+  background-color: var(--button-hover-background-color);
 }

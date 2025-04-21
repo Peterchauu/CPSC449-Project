@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/TaskModal.css"; // Import the CSS file for styling
+import "../styles/index.css"; 
 
 const TaskModal = ({ onClose, onSave }) => {
   const [title, setTitle] = useState("");
@@ -7,13 +7,14 @@ const TaskModal = ({ onClose, onSave }) => {
 
   const handleSave = () => {
     onSave(title, description);
+    onClose();
   };
 
   return (
-    <div className="task-modal">
-      <div className="task-modal-content">
+    <div className="modal">
+      <div className="modal-content">
         <h2>Add Task</h2>
-        <label>
+        <label className="task-title">
           Title:
           <input
             type="text"
@@ -21,18 +22,18 @@ const TaskModal = ({ onClose, onSave }) => {
             onChange={(e) => setTitle(e.target.value)}
           />
         </label>
-        <label>
+        <label className="task-description">
           Description:
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </label>
-        <div className="task-modal-buttons">
-          <button onClick={handleSave} className="save-button">
+        <div className="modal-buttons">
+          <button onClick={handleSave} className="button save-button">
             Save
           </button>
-          <button onClick={onClose} className="cancel-button">
+          <button onClick={onClose} className="button cancel-button">
             Cancel
           </button>
         </div>

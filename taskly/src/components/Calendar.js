@@ -13,14 +13,9 @@ const locales = {
 };
 
 const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
+  format, parse, startOfWeek, getDay, locales,
 });
 
-// Calendar List Component
 export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) => {
   const [calendars, setCalendars] = useState([]);
   const [newCalendarName, setNewCalendarName] = useState("");
@@ -109,7 +104,6 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
   );
 };
 
-// Calendar Display Component
 export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHoveredDate, setIsEventModalOpen, setSelectedEvent }) => {
   useEffect(() => {
     if (!selectedCalendar) return;
@@ -198,7 +192,6 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHov
   );
 };
 
-// Main Calendar Component
 const Calendar = ({ user, displayOnly, addEvent }) => {
   const [selectedCalendar, setSelectedCalendar] = useState(null);
   const [events, updateEvents] = useState([]);

@@ -13,7 +13,6 @@
 
 .dark-mode-toggle:hover {
   color: #0056b3;
-  transform: scale(1.1);
 }
 
 body.dark-mode .dark-mode-toggle {

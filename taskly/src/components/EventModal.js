@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/EventModal.css";
+import "../styles/index.css";
 
 const EventModal = ({ onClose, onSave, onDelete, initialDate, event }) => {
   const [title, setTitle] = useState(event ? event.title : "");
@@ -13,7 +13,7 @@ const EventModal = ({ onClose, onSave, onDelete, initialDate, event }) => {
     } else if (initialDate) {
       const startDate = new Date(initialDate);
       const endDate = new Date(initialDate);
-      endDate.setHours(startDate.getHours() + 1); // Set end time to 1 hour after start time
+      endDate.setHours(startDate.getHours() + 1);
       setStart(startDate.toISOString().slice(0, 16));
       setEnd(endDate.toISOString().slice(0, 16));
     }
@@ -32,8 +32,8 @@ const EventModal = ({ onClose, onSave, onDelete, initialDate, event }) => {
   };
 
   return (
-    <div className="event-modal">
-      <div className="event-modal-content">
+    <div className="modal">
+      <div className="modal-content">
         <h2>{event ? "Edit Event" : "Add Event"}</h2>
         <label>
           Title:
@@ -59,16 +59,16 @@ const EventModal = ({ onClose, onSave, onDelete, initialDate, event }) => {
             onChange={(e) => setEnd(e.target.value)}
           />
         </label>
-        <div className="event-modal-buttons">
-          <button onClick={handleSave} className="save-button">
+        <div className="modal-buttons">
+          <button onClick={handleSave} className="button save-button">
             Save
           </button>
           {event && (
-            <button onClick={handleDelete} className="delete-button">
+            <button onClick={handleDelete} className="button delete-button">
               Delete
             </button>
           )}
-          <button onClick={onClose} className="cancel-button">
+          <button onClick={onClose} className="button cancel-button">
             Cancel
           </button>
         </div>

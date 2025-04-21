@@ -9,7 +9,7 @@
   width: 20%;
   padding: 20px;
   border-right: 1px solid var(--border-color);
-  background-color: var(--card-background-color); /* Use a CSS variable */
+  background-color: var(--card-background-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,6 +21,7 @@
   color: var(--text-color);
 }
 
+.add-task-button,
 .signout-button,
 .clear-button,
 .create-calendar-button,
@@ -28,7 +29,7 @@
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
   background-color: var(--button-background-color); 
@@ -36,6 +37,7 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.add-task-button:hover,
 .signout-button:hover,
 .clear-button:hover,
 .create-calendar-button:hover,
@@ -52,37 +54,25 @@
   color: var(--text-color);
 }
 
-.add-task-button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  background-color: var(--button-background-color); /* Use a CSS variable */
-  color: var(--button-text-color); /* Use a CSS variable */
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
 .main-content {
   width: 100%;
   padding: 20px;
-  background-color: var(--card-background-color); /* Use a CSS variable */
+  background-color: var(--card-background-color);
   transition: background-color 0.3s ease;
 }
 
 .task-item {
   padding: 8px;
   margin: 4px;
-  background-color: var(--card-background-color); /* Use a CSS variable */
+  background-color: var(--card-background-color); 
   border-radius: 4px;
-  color: var(--text-color); /* Use a CSS variable */
+  color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .task-item:hover {
-  background-color: var(--button-hover-background-color); /* Use a CSS variable */
-  color: var(--button-text-color); /* Use a CSS variable */
+  background-color: var(--button-hover-background-color);
+  color: var(--button-text-color);
 }
 
 .calendar-item {
@@ -90,11 +80,11 @@
   margin-bottom: 5px;
   border-radius: 5px;
   background-color: transparent;
-  color: var(--text-color); /* Use a CSS variable */
+  color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .calendar-item.selected {
-  background-color: var(--button-hover-background-color); /* Use a CSS variable */
-  color: var(--button-text-color); /* Use a CSS variable */
+  background-color: var(--button-hover-background-color); 
+  color: var(--button-text-color);
 }
