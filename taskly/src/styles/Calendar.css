@@ -1,13 +1,24 @@
+.rbc-events-container {
+  margin: 0px !important;
+}
+
 .rbc-event {
-  background-color: #007bff !important;
+  background-color: var(--button-background-color) !important;
   border-radius: 6px;
   opacity: 0.9;
-  color: white;
+  color: var(--button-text-color) !important;
   border: none;
   display: block;
   padding: 5px;
   margin: 2px 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease, border 0.3s ease, box-shadow 0.3s ease !important;
+  display: inline-table !important;
+  flex: 0 0 0 !important;
+  min-height: 50px !important;
+}
+
+.rbc-event-label {
+  text-align: center;
 }
 
 .rbc-event:hover {
@@ -19,6 +30,47 @@
   background-color: #e3f2fd !important; 
   color: #000000 !important; 
   border: 1px solid #90caf9 !important; 
+}
+
+.rbc-day-bg {
+  transition: background-color 0.3s ease, border-color 0.3s ease !important;
+}
+
+.rbc-toolbar button {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease !important;
+}
+
+.rbc-calendar {
+  position: relative;
+}
+
+.rbc-day-bg {
+  position: relative;
+  min-height: 80px;
+  transition: background-color 0.2s ease, background-color 0.3s ease, border-color 0.3s ease !important;
+}
+
+.rbc-day-bg.rbc-drag-over {
+  background-color: var(--button-hover-background-color);
+  opacity: 0.5;
+}
+
+.rbc-day-slot .rbc-event-content {
+  height: 100% !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 2px 5px !important;
+  transition: color 0.3s ease, background-color 0.3s ease !important;
+}
+
+.rbc-time-slot {
+  border-color: none;
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease !important;
+  box-sizing: border-box !important;
 }
 
 body.dark-mode .rbc-today {
@@ -43,6 +95,10 @@ body.dark-mode .rbc-today {
   outline: none;
 }
 
+.task-dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
 
 .my-calendar-section ul {
   list-style-type: none;
@@ -80,3 +136,72 @@ body.dark-mode .rbc-today {
   border-color: var(--button-background-color);
   outline: none;
 }
+
+.calendar-droppable {
+  height: 100%;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.calendar-droppable.rbc-drag-over {
+  background-color: var(--button-hover-background-color);
+  opacity: 0.5;
+}
+
+.calendar-droppable.drag-over {
+  background-color: var(--button-hover-background-color) !important;
+  opacity: 0.7;
+}
+
+.custom-event {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  text-align: center;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  transition: color 0.3s ease, background-color 0.3s ease !important;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.custom-event.task-event {
+  background-color: var(--button-background-color);
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease !important;
+}
+
+.custom-event.normal-event {
+  background-color: var(--button-background-color);
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease !important;
+}
+
+body.dark-mode .custom-event.task-event {
+  background-color: #ffa726;
+}
+
+body.dark-mode .rbc-time-view,
+body.dark-mode .rbc-month-view,
+body.dark-mode .rbc-month-row + .rbc-month-row,
+body.dark-mode .rbc-day-bg + .rbc-day-bg,
+body.dark-mode .rbc-header,
+body.dark-mode .rbc-header + .rbc-header,
+body.dark-mode .rbc-timeslot-group,
+body.dark-mode .rbc-time-content > * + * > *,
+body.dark-mode .rbc-time-content,
+body.dark-mode .rbc-time-header-content {
+  border-color: #555555 !important;
+}
+

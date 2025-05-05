@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion, getDocs, deleteDoc} from "firebase/firestore";
+import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion, getDocs, deleteDoc,} from "firebase/firestore";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
-import EventModal from "./EventModal";
+import { Droppable } from "@hello-pangea/dnd";
 import "../styles/Calendar.css";
 
 const locales = {
@@ -13,7 +12,11 @@ const locales = {
 };
 
 const localizer = dateFnsLocalizer({
-  format, parse, startOfWeek, getDay, locales,
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
 });
 
 export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) => {
@@ -57,7 +60,6 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
       const calendarRef = doc(db, "calendars", calendarId);
       await deleteDoc(calendarRef);
       alert("Calendar deleted successfully!");
-
     } catch (error) {
       console.error("Error deleting calendar:", error);
       alert("Failed to delete calendar. Check the console for details.");
@@ -100,7 +102,7 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
             onClick={() => setSelectedCalendar(calendar)}
             className={`calendar-item ${
               selectedCalendar?.id === calendar.id ? "selected" : ""
-            }`} 
+            }`}
           >
             <span>{calendar.name}</span>
             <button
@@ -111,7 +113,7 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
               className="delete-calendar-button"
             >
               x
-            </button>            
+            </button>
             <input
               type="text"
               placeholder="Share with email"
@@ -131,7 +133,18 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
   );
 };
 
-export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHoveredDate, setIsEventModalOpen, setSelectedEvent }) => {
+export const CalendarDisplay = ({
+  selectedCalendar,
+  events,
+  updateEvents,
+  setHoveredDate,
+  setIsEventModalOpen, 
+  setIsTaskViewModalOpen, 
+  setSelectedEvent,
+}) => {
+
+  const [currentView, setCurrentView] = useState("week"); 
+
   useEffect(() => {
     if (!selectedCalendar) return;
 
@@ -141,8 +154,10 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHov
         const calendarEvents = snapshot.docs.map((doc) => ({
           id: doc.id,
           title: doc.data().title,
-          start: new Date(doc.data().start), 
+          description: doc.data().description,
+          start: new Date(doc.data().start),
           end: new Date(doc.data().end),
+          type: doc.data().type 
         }));
         updateEvents(calendarEvents);
       }
@@ -150,10 +165,6 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHov
 
     return () => unsubscribe();
   }, [selectedCalendar, updateEvents]);
-
-  const handleSlotHover = (slotInfo) => {
-    setHoveredDate(slotInfo.start);
-  };
 
   const handleSlotSelect = (slotInfo) => {
     setHoveredDate(slotInfo.start);
@@ -163,115 +174,108 @@ export const CalendarDisplay = ({ selectedCalendar, events, updateEvents, setHov
 
   const handleEventSelect = (event) => {
     setSelectedEvent(event);
-    setIsEventModalOpen(true);
+    if (event.type === "task") {
+      setIsTaskViewModalOpen(true);
+    } else {
+      setIsEventModalOpen(true);
+    }
   };
-  
-  const eventPropGetter = (event) => {
-    const style = {
-      backgroundColor: "#add8e6",
-      borderRadius: "5px",
-      opacity: 0.8,
-      color: "black",
-      border: "0px",
-      display: "block",
+
+  const dayPropGetter = (date) => ({
+    className: "calendar-droppable",
+    style: { backgroundColor: "transparent", cursor: "pointer" },
+    "data-date": date.toISOString(),
+  });
+
+  const eventPropGetter = (event, start, end) => {
+    const isDark = document.body.classList.contains("dark-mode");
+    
+    const baseTaskStyle = {
+      backgroundColor: isDark ? "#ffa726" : "#ff9800",
+      borderRadius: "6px",
+      border: "2px solid rgba(0, 0, 0, 0.15)",
+      color: "#fff",
+      fontWeight: "bold",
     };
+    
+    const baseEventStyle = {
+      backgroundColor: isDark ? "#1565c0" : "#007bff",
+      borderRadius: "6px",
+      border: "2px solid rgba(0, 0, 0, 0.15)",
+      color: "#fff",
+      fontWeight: "bold",
+    };
+
+    // Apply height adjustment for both day and week views
+    if (currentView === "day" || currentView === "week") {
+      const durationHours = (end - start) / (1000 * 60 * 60);
+      const eventHeight = Math.max(30, durationHours * 60);
+      
+      const timeViewStyles = {
+        position: "absolute",
+        height: `${eventHeight}px !important`,
+        minHeight: `${eventHeight}px !important`,
+        maxHeight: `${eventHeight}px !important`,
+      };
+      
+      return {
+        style: {
+          ...(event.type === "task" ? baseTaskStyle : baseEventStyle),
+          ...timeViewStyles
+        }
+      };
+    }
+
     return {
-      style: style,
+      style: event.type === "task" ? baseTaskStyle : baseEventStyle
     };
   };
 
-  const eventComponent = ({ event }) => (
-    <span>
-      <strong>{event.title}</strong>
-      <br />
-      {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-    </span>
-  );
-
-  return (
-    <DragDropContext>
-      <Droppable droppableId="calendar">
-        {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            <h2>{selectedCalendar.name}</h2>
-            <div style={{ height: 600 }}> 
-              <BigCalendar
-                localizer={localizer}
-                events={events} 
-                startAccessor="start" 
-                endAccessor="end"  
-                style={{ height: "100%" }}
-                onSelectSlot={handleSlotSelect}
-                onSelectEvent={handleEventSelect} 
-                onHoverSlot={handleSlotHover}
-                selectable
-                eventPropGetter={eventPropGetter} 
-                components={{
-                  event: eventComponent, 
-                }}
-              />
-            </div>
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
-  );
-};
-
-const Calendar = ({ user, displayOnly, addEvent }) => {
-  const [selectedCalendar, setSelectedCalendar] = useState(null);
-  const [events, updateEvents] = useState([]);
-  const [hoveredDate, setHoveredDate] = useState(null);
-  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-
-  if (displayOnly) {
-    return selectedCalendar ? (
-      <div>
-        <h2>{selectedCalendar.name}</h2>
-        <div style={{ height: 500 }}>
-          <BigCalendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: "100%" }}
-          />
-        </div>
+  const CustomEvent = ({ event }) => {
+    return (
+      <div className={`custom-event ${event.type === "task" ? "task-event" : "normal-event"}`}>
+        <div className="event-title">{event.title}</div>
       </div>
-    ) : (
-      <p>Please select a calendar to view events.</p>
     );
-  }
+  };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      <div style={{ width: "30%", padding: "20px", borderRight: "1px solid #ccc" }}>
-        <h1>Dashboard</h1>
-        <CalendarList
-          user={user}
-          setSelectedCalendar={setSelectedCalendar}
-          selectedCalendar={selectedCalendar}
-        />
-      </div>
-      <div style={{ width: "70%", padding: "20px" }}>
-        <CalendarDisplay
-          selectedCalendar={selectedCalendar}
+    <div>
+      <h2>{selectedCalendar?.name}</h2>
+      <div style={{ height: 600 }}>
+        <BigCalendar
+          localizer={localizer}
           events={events}
-          updateEvents={updateEvents}
-          setHoveredDate={setHoveredDate}
-          setIsEventModalOpen={setIsEventModalOpen}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: "100%" }}
+          onSelectSlot={handleSlotSelect}
+          onSelectEvent={handleEventSelect}
+          selectable
+          dayPropGetter={dayPropGetter}
+          eventPropGetter={eventPropGetter}
+          onView={(view) => setCurrentView(view)}
+          views={['month', 'week', 'day']}
+          defaultView={'month'} 
+          components={{
+            event: CustomEvent,
+            dateCellWrapper: ({ children, value }) => (
+              <Droppable droppableId={value.toISOString()}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`rbc-day-bg calendar-droppable ${snapshot.isDraggingOver ? "drag-over" : ""}`}
+                  >
+                    {children}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ),
+          }}
         />
       </div>
-      {isEventModalOpen && (
-        <EventModal
-          onClose={() => setIsEventModalOpen(false)}
-          onSave={addEvent}
-          initialDate={hoveredDate}
-        />
-      )}
     </div>
   );
 };
-
-export default Calendar;

@@ -20,7 +20,7 @@ const EventModal = ({ onClose, onSave, onDelete, initialDate, event }) => {
   }, [initialDate, event]);
 
   const handleSave = () => {
-    onSave(title, new Date(start), new Date(end));
+    onSave(title, new Date(start), new Date(end), event?.id);
     onClose();
   };
 

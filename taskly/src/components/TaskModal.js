@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/index.css"; 
 
-const TaskModal = ({ onClose, onSave }) => {
+const TaskModal = ({ onClose, onSave, onDelete, initialTask }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  useEffect(() => {
+    setTitle(initialTask ? initialTask.title || "" : "");
+    setDescription(initialTask ? initialTask.description || "" : "");
+  }, [initialTask]);
+
   const handleSave = () => {
-    onSave(title, description);
+    onSave(title, description, initialTask?.id);
+    onClose();
+  };
+
+  const handleDelete = () => {
+    if (onDelete && initialTask?.id) {
+      onDelete(initialTask.id);
+    }
     onClose();
   };
 
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>Add Task</h2>
+        <h2>{initialTask ? "Edit Task" : "Add Task"}</h2>
         <label className="task-title">
           Title:
           <input
@@ -31,8 +43,13 @@ const TaskModal = ({ onClose, onSave }) => {
         </label>
         <div className="modal-buttons">
           <button onClick={handleSave} className="button save-button">
-            Save
+            {initialTask ? "Update" : "Save"}
           </button>
+          {initialTask && (
+            <button onClick={handleDelete} className="button delete-button">
+              Delete
+            </button>
+          )}
           <button onClick={onClose} className="button cancel-button">
             Cancel
           </button>
