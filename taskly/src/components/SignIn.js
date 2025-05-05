@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { auth, provider } from "../firebase";
+import { auth, provider, db } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import DarkModeToggle from "./DarkModeToggle";
 import "../styles/index.css";
 
@@ -9,8 +10,18 @@ const SignIn = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, provider);
-      window.location.href = "/dashboard"; 
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Create or update the user document using their email as the document ID
+      await setDoc(doc(db, "users", user.email), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      });
+
+      window.location.href = "/dashboard";
     } catch (error) {
       setError("Failed to sign in with Google. Please try again.");
     }

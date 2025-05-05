@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion, getDocs, deleteDoc,} from "firebase/firestore";
+import { collection, onSnapshot, updateDoc, addDoc, doc, arrayUnion, getDocs, deleteDoc, query, where } from "firebase/firestore";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
@@ -25,15 +25,24 @@ export const CalendarList = ({ user, setSelectedCalendar, selectedCalendar }) =>
   const [shareEmail, setShareEmail] = useState("");
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "calendars"), (snapshot) => {
+    if (!user) return;
+
+    // Query calendars where the user is the owner or is included in the sharedWith array
+    const calendarsQuery = query(
+      collection(db, "calendars"),
+      where("sharedWith", "array-contains", user.email)
+    );
+
+    const unsubscribe = onSnapshot(calendarsQuery, (snapshot) => {
       const userCalendars = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       setCalendars(userCalendars);
     });
+
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const createCalendar = async () => {
     if (!newCalendarName.trim()) return;

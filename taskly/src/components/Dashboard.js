@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, query, where, getDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
@@ -43,6 +43,21 @@ const Dashboard = () => {
       );
       return () => unsubscribe();
     }
+  }, [user]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+  
+      const userDoc = await getDoc(doc(db, "users", user.email));
+      if (userDoc.exists()) {
+        console.log("User data:", userDoc.data());
+      } else {
+        console.error("No user document found!");
+      }
+    };
+  
+    fetchUserData();
   }, [user]);
 
   const addTask = async (title, description, existingTaskId) => {
