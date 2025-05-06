@@ -1,35 +1,24 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { Link } from 'react-router-dom';
 import '../styles/SignIn.css';
 
-const SignIn = () => {
+const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleEmailSignIn = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      setError(error.message);
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName });
     } catch (error) {
       setError(error.message);
       setIsLoading(false);
@@ -40,11 +29,12 @@ const SignIn = () => {
     <div className="signin-container">
       <div className="signin-card">
         <h1>Taskly</h1>
-        <h2>Sign In</h2>
+        <h2>Create an Account</h2>
         
         {error && <p className="error-message">{error}</p>}
         
-        <form onSubmit={handleEmailSignIn}>
+        <form onSubmit={handleRegister}>
+         
           <div className="input-group">
             <input
               type="email"
@@ -61,6 +51,7 @@ const SignIn = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
+              minLength="6"
               required
             />
           </div>
@@ -70,26 +61,16 @@ const SignIn = () => {
             className="signin-button" 
             disabled={isLoading}
           >
-            {isLoading ? 'Signing In...' : 'Sign In with Email'}
+            {isLoading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
         
-        <div className="divider">OR</div>
-        
-        <button 
-          onClick={handleGoogleSignIn} 
-          className="google-signin-button"
-          disabled={isLoading}
-        >
-          Sign In with Google
-        </button>
-        
         <p className="signup-link">
-          Need to register? <Link to="/register">Click Here!</Link>
+          Have an Account? <Link to="/signin">Sign in here!</Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default SignIn;
+export default Register;

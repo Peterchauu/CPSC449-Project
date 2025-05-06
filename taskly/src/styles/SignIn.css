@@ -1,0 +1,107 @@
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--background-color);
+  transition: background-color 0.3s ease;
+}
+
+.signin-card {
+  background: var(--card-background-color);
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: var(--input-background-color, #fff);
+  color: var(--input-text-color, #333);
+}
+
+.signin-button, .google-signin-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--font-style);
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: 1px solid var(--button-border-color);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.google-signin-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  color: #444;
+}
+
+.signin-button:hover, .google-signin-button:hover {
+  background-color: var(--button-hover-background-color);
+  transform: scale(0.98);
+}
+
+.signin-button:disabled, .google-signin-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.divider {
+  margin: 15px 0;
+  color: var(--text-color);
+  position: relative;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: var(--divider-color, #ddd);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.error-message {
+  color: var(--error-color, #ff3333);
+  margin-bottom: 15px;
+}
+
+.signup-link {
+  margin-top: 20px;
+  color: var(--text-color);
+}
+
+.signup-link a {
+  color: var(--link-color, #0066cc);
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
