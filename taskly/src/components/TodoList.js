@@ -30,21 +30,13 @@ const TodoList = ({ todos, user }) => {
   return (
     <div>
       {todos.map((todo, index) => (
-        <Draggable 
-          key={todo.id} 
-          draggableId={todo.id} 
-          index={index}
-        >
-          {(provided, snapshot) => (
+        <Draggable key={todo.id} draggableId={todo.id} index={index}>
+          {(provided) => (
             <div
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              className={`task-item ${snapshot.isDragging ? 'task-dragging' : ''}`}
-              style={{
-                ...provided.draggableProps.style,
-                opacity: snapshot.isDragging ? 0.5 : 1
-              }}
+              className="task-item"
             >
               <span>{todo.title}</span>
               <button

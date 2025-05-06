@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, query, where, getDoc } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import TodoList from "./TodoList";
 import { CalendarList, CalendarDisplay } from "./Calendar";
@@ -43,21 +43,6 @@ const Dashboard = () => {
       );
       return () => unsubscribe();
     }
-  }, [user]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user) return;
-  
-      const userDoc = await getDoc(doc(db, "users", user.email));
-      if (userDoc.exists()) {
-        console.log("User data:", userDoc.data());
-      } else {
-        console.error("No user document found!");
-      }
-    };
-  
-    fetchUserData();
   }, [user]);
 
   const addTask = async (title, description, existingTaskId) => {
@@ -186,22 +171,34 @@ const Dashboard = () => {
 
   const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
-    if (!destination || !selectedCalendar) return;
-    if (source.droppableId === "tasks" && destination.droppableId !== "tasks") {
-      const draggedTask = todos.find(task => task.id === draggableId);
-      if (!draggedTask) return;
+
+    // If there's no valid destination, do nothing
+    if (!destination) return;
+
+    // Handle dragging a task from the TodoList to an event
+    if (source.droppableId === "tasks" && destination.droppableId.startsWith("event-")) {
+      const draggedTask = todos.find((task) => task.id === draggableId);
+      const eventId = destination.droppableId.replace("event-", ""); // Extract event ID from droppableId
+
+      if (!draggedTask || !selectedCalendar || !eventId) return;
+
       try {
-        await addDoc(collection(db, "calendars", selectedCalendar.id, "events"), {
-          title: draggedTask.title,
-          description: draggedTask.description || "", // Store the description
-          start: new Date(destination.droppableId).toISOString(),
-          end: new Date(new Date(destination.droppableId).setHours(new Date(destination.droppableId).getHours() + 1)).toISOString(),
-          type: "task"
-        });
+        // Add the task to the event's tasks subcollection
+        await addDoc(
+          collection(db, "calendars", selectedCalendar.id, "events", eventId, "tasks"),
+          {
+            title: draggedTask.title,
+            description: draggedTask.description || "",
+          }
+        );
+
+        // Remove the task from the TodoList
         await deleteDoc(doc(db, "users", user.uid, "todos", draggedTask.id));
+
+        // Update local state
+        setTodos((prevTodos) => prevTodos.filter((task) => task.id !== draggedTask.id));
       } catch (error) {
-        console.error("Error moving task to calendar:", error);
-        alert("Failed to move task to calendar");
+        console.error("Error adding task to event:", error);
       }
     }
   };
@@ -276,6 +273,7 @@ const Dashboard = () => {
             onDelete={deleteEvent}
             initialDate={hoveredDate}
             event={selectedEvent}
+            selectedCalendar={selectedCalendar} // Ensure this is passed
           />
         )}
         {isTaskViewModalOpen && selectedEvent && (

@@ -147,27 +147,43 @@ export const CalendarDisplay = ({
   events,
   updateEvents,
   setHoveredDate,
-  setIsEventModalOpen, 
-  setIsTaskViewModalOpen, 
+  setIsEventModalOpen,
+  setIsTaskViewModalOpen,
   setSelectedEvent,
 }) => {
-
-  const [currentView, setCurrentView] = useState("week"); 
+  const [currentView, setCurrentView] = useState("week");
 
   useEffect(() => {
     if (!selectedCalendar) return;
 
     const unsubscribe = onSnapshot(
       collection(db, "calendars", selectedCalendar.id, "events"),
-      (snapshot) => {
-        const calendarEvents = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          title: doc.data().title,
-          description: doc.data().description,
-          start: new Date(doc.data().start),
-          end: new Date(doc.data().end),
-          type: doc.data().type 
-        }));
+      async (snapshot) => {
+        const calendarEvents = await Promise.all(
+          snapshot.docs.map(async (doc) => {
+            const eventData = doc.data();
+
+            // Fetch tasks for the event
+            const tasksSnapshot = await getDocs(
+              collection(db, "calendars", selectedCalendar.id, "events", doc.id, "tasks")
+            );
+            const tasks = tasksSnapshot.docs.map((taskDoc) => ({
+              id: taskDoc.id,
+              ...taskDoc.data(),
+            }));
+
+            return {
+              id: doc.id,
+              title: eventData.title,
+              description: eventData.description,
+              start: new Date(eventData.start),
+              end: new Date(eventData.end),
+              type: eventData.type,
+              tasks, // Include tasks in the event
+            };
+          })
+        );
+
         updateEvents(calendarEvents);
       }
     );
@@ -190,15 +206,9 @@ export const CalendarDisplay = ({
     }
   };
 
-  const dayPropGetter = (date) => ({
-    className: "calendar-droppable",
-    style: { backgroundColor: "transparent", cursor: "pointer" },
-    "data-date": date.toISOString(),
-  });
-
-  const eventPropGetter = (event, start, end) => {
+  const eventPropGetter = (event) => {
     const isDark = document.body.classList.contains("dark-mode");
-    
+
     const baseTaskStyle = {
       backgroundColor: isDark ? "#ffa726" : "#ff9800",
       borderRadius: "6px",
@@ -206,7 +216,7 @@ export const CalendarDisplay = ({
       color: "#fff",
       fontWeight: "bold",
     };
-    
+
     const baseEventStyle = {
       backgroundColor: isDark ? "#1565c0" : "#007bff",
       borderRadius: "6px",
@@ -215,36 +225,27 @@ export const CalendarDisplay = ({
       fontWeight: "bold",
     };
 
-    // Apply height adjustment for both day and week views
-    if (currentView === "day" || currentView === "week") {
-      const durationHours = (end - start) / (1000 * 60 * 60);
-      const eventHeight = Math.max(30, durationHours * 60);
-      
-      const timeViewStyles = {
-        position: "absolute",
-        height: `${eventHeight}px !important`,
-        minHeight: `${eventHeight}px !important`,
-        maxHeight: `${eventHeight}px !important`,
-      };
-      
-      return {
-        style: {
-          ...(event.type === "task" ? baseTaskStyle : baseEventStyle),
-          ...timeViewStyles
-        }
-      };
-    }
-
     return {
-      style: event.type === "task" ? baseTaskStyle : baseEventStyle
+      style: event.type === "task" ? baseTaskStyle : baseEventStyle,
     };
   };
 
   const CustomEvent = ({ event }) => {
     return (
-      <div className={`custom-event ${event.type === "task" ? "task-event" : "normal-event"}`}>
-        <div className="event-title">{event.title}</div>
-      </div>
+      <Droppable droppableId={`event-${event.id}`}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`custom-event ${
+              event.type === "task" ? "task-event" : "normal-event"
+            } ${snapshot.isDraggingOver ? "drag-over" : ""}`}
+          >
+            <div className="event-title">{event.title}</div>
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     );
   };
 
@@ -261,27 +262,12 @@ export const CalendarDisplay = ({
           onSelectSlot={handleSlotSelect}
           onSelectEvent={handleEventSelect}
           selectable
-          dayPropGetter={dayPropGetter}
           eventPropGetter={eventPropGetter}
           onView={(view) => setCurrentView(view)}
-          views={['month', 'week', 'day']}
-          defaultView={'month'} 
+          views={["month", "week", "day"]}
+          defaultView={"month"}
           components={{
             event: CustomEvent,
-            dateCellWrapper: ({ children, value }) => (
-              <Droppable droppableId={value.toISOString()}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className={`rbc-day-bg calendar-droppable ${snapshot.isDraggingOver ? "drag-over" : ""}`}
-                  >
-                    {children}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            ),
           }}
         />
       </div>
